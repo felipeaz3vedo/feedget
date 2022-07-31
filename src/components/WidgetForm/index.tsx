@@ -6,6 +6,7 @@ import thoughtImageUrl from '../../assets/thought.svg'
 import { useState } from 'react'
 import { FeedbackTypeStep } from './Steps/FeedbackTypeStep'
 import { FeedbackContentStep } from './Steps/FeedbackContentStep'
+import { FeedbackSucessStep } from './Steps/FeedbackSucessStep'
 
 export const feedbackTypes = {
   BUG: {
@@ -18,7 +19,7 @@ export const feedbackTypes = {
   },
   IDEA: {
     id: '',
-    title: 'idea',
+    title: 'ideia',
     image: {
       source: ideaImageUrl,
       alt: 'Imagem de uma lâmpada',
@@ -38,28 +39,40 @@ export type FeedbackType = keyof typeof feedbackTypes
 
 export function WidgetForm() {
   const [feedbackType, setFeedbackType] = useState<FeedbackType | null>(null)
+  const [feedBackSent, setFeedbackSent] = useState(false)
 
   function handleRestartFeedback() {
+    setFeedbackSent(false)
     setFeedbackType(null)
   }
 
   return (
     <div
-      className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center 
-      shadow-lg w-[calc(100vw-2rem)] md:w-auto"
+      className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center shadow-lg 
+      w-[calc(100vw-2rem)] md:w-auto"
     >
-      {!feedbackType ? (
-        <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
+      {feedBackSent ? (
+        <FeedbackSucessStep
+          onFeedbackRestartRequested={handleRestartFeedback}
+        />
       ) : (
-        <FeedbackContentStep 
-        feedbackType={feedbackType}
-        onFeedbackRestartRequested={handleRestartFeedback} />
+        <>
+          {!feedbackType ? (
+            <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
+          ) : (
+            <FeedbackContentStep
+              feedbackType={feedbackType}
+              onFeedbackRestartRequested={handleRestartFeedback}
+              onFeedbackSent={() => setFeedbackSent(true)}
+            />
+          )}
+        </>
       )}
 
       <footer className="text-xs text-neutral-400">
         Feito com ♥ pela{' '}
         <a
-          className="underline-offset-2"
+          className="underline underline-offset-2"
           target="_blank"
           href="https://rocketseat.com.br"
         >
